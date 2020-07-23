@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import io.cucumber.java.en.*;
 import pageObjects.AddCustomerPage;
 import pageObjects.LoginPage;
+import pageObjects.SearchCustomerPage;
 
 public class Steps extends BaseClass{
 	
@@ -124,6 +125,44 @@ public class Steps extends BaseClass{
 	public void user_can_view_confirmation_message(String cnfrmMsg) {
 		Assert.assertTrue(driver.getPageSource().contains(cnfrmMsg));
 
+	}
+	
+	@When("Enter customer Email")
+	public void enter_customer_Email() {		
+		scp = new SearchCustomerPage(driver);
+		scp.setEmail("victoria_victoria@nopCommerce.com");
+
+	}
+
+	@When("Click on search button")
+	public void click_on_search_button() throws InterruptedException {
+		scp.clickSearchButton();
+		Thread.sleep(3000);
+
+	}
+
+	@Then("User should found Email in the search table")
+	public void user_should_found_Email_in_the_search_table() {
+		boolean status = scp.searchCustomerByEmail("victoria_victoria@nopCommerce.com");
+		Assert.assertEquals(true, status);
+	}
+	
+	@When("Enter customer FirstName")
+	public void enter_customer_FirstName() {
+		scp = new SearchCustomerPage(driver);
+		scp.setFirstname("Victoria");
+	}
+
+	@When("Enter customer LastName")
+	public void enter_customer_LastName() {
+		scp.setLastname("Terces");
+	}
+
+	@Then("User should found Name in the search table")
+	public void user_should_found_Name_in_the_search_table() {
+		boolean status = scp.searchCustomerByName("Victoria", "Terces");
+		Assert.assertEquals(true, status);
+		
 	}
 
 }
