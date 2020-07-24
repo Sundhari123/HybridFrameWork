@@ -1,8 +1,17 @@
 package stepDefinitions;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 
+import io.cucumber.java.Before;
 import io.cucumber.java.en.*;
 import pageObjects.AddCustomerPage;
 import pageObjects.LoginPage;
@@ -10,22 +19,63 @@ import pageObjects.SearchCustomerPage;
 
 public class Steps extends BaseClass{
 	
+	@Before
+	public void setUp() throws IOException
+	{
+		property = new Properties();
+		FileInputStream propertyFile = new FileInputStream("config.properties");
+		property.load(propertyFile);
+		
+		logger = Logger.getLogger("BDDProject");
+		PropertyConfigurator.configure("log4j.properties");
+		
+		String brwsr = property.getProperty("browser");
+		
+		if(brwsr.equals("chrome"))
+		{
+			System.setProperty("webdriver.chrome.driver", property.getProperty("chromepath"));
+			driver = new ChromeDriver();
+			logger.info("*******Launching browser*********");
+		}
+		
+		if(brwsr.equals("firefox"))
+		{
+			System.setProperty("webdriver.gecko.driver", property.getProperty("firefoxpath"));
+			driver = new FirefoxDriver();
+			logger.info("*******Launching browser*********");
+		}
+		
+		if(brwsr.equals("ie"))
+		{
+			System.setProperty("webdriver.ie.driver", property.getProperty("iepath"));
+			driver = new InternetExplorerDriver();
+			logger.info("*******Launching browser*********");
+		}
+		
+		if(brwsr.equals("chrome"))
+		{
+			System.setProperty("webdriver.chrome.driver", property.getProperty("chromepath"));
+			driver = new ChromeDriver();
+			logger.info("*******Launching browser*********");
+		}
+
+	}
+
 	@Given("User Launch Chrome browser")
 	public void user_Launch_Chrome_browser() {
-		
-		System.setProperty("webdriver.chrome.driver",System.getProperty("user.dir")+"//Drivers/chromedriver.exe");
-		driver = new ChromeDriver();
-		lp = new LoginPage(driver);
+		lp = new LoginPage(driver);		
 	}
 
 	@When("User opens URL {string}")
 	public void user_opens_URL(String url) throws InterruptedException {
+		logger.info("*******Opening url*********");
 		driver.get(url);
 		Thread.sleep(2000);
 	}
 
 	@When("User enters email as {string} and password as {string}")
 	public void user_enters_email_as_and_password_as(String uName, String passwd) throws InterruptedException {
+		logger.info("*******Providing email and password*********");
 		lp.setUserName(uName);
 		lp.setPassword(passwd);
 		Thread.sleep(2000);
